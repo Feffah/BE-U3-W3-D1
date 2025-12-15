@@ -1,4 +1,5 @@
-﻿using BE_U3_W3_D1.Services;
+﻿using BE_U3_W3_D1.Models.Entities;
+using BE_U3_W3_D1.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -46,5 +47,26 @@ namespace BE_U3_W3_D1.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
+
+            [HttpGet("by-name/{Nome}")]
+
+            public async Task<IActionResult> GetByName(string Nome)
+            {
+                try
+                {
+                    Student student = await _studentService.GetByNameAsNoTracking(Nome);
+
+                    if (student is null)
+                    {
+                        return BadRequest();
+                    }
+                    return Ok(student);
+                }
+                catch (Exception ex)
+                {
+                    return StatusCode(StatusCodes.Status500InternalServerError);
+                }
+            }
+        }
     }
-}
+

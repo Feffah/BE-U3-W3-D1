@@ -20,5 +20,12 @@ namespace BE_U3_W3_D1.Services
         {
             return await _context.Students.AsNoTracking().FirstOrDefaultAsync(s => s.Id == Id);
         }
+        public async Task<Student> GetByNameAsNoTracking(string Nome)
+        {
+            return await _context.Students.AsNoTracking().FirstOrDefaultAsync(s => s.Nome == Nome);
+        }
+
+
+        questo nel services
     }
 }
