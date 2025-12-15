@@ -1,0 +1,6 @@
+@BE_U3_W3_D1_HostAddress = http://localhost:5020
+
+GET {{BE_U3_W3_D1_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
