@@ -15,5 +15,9 @@ namespace BE_U3_W3_D1.Models.Dto
         public string UserName { get; set; }
         [Required]
         public string Password { get; set; }
+        [Phone]
+        public string PhoneNumber { get; set; }
+
+        public DateTime Birthday { get; set; }
     }
 }

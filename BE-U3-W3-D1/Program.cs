@@ -1,11 +1,22 @@
 using BE_U3_W3_D1.Models.Entities;
+using BE_U3_W3_D1.Models.Exceptions;
 using BE_U3_W3_D1.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
+    .CreateLogger();
+
+Log.Information("Starting application...");
+Log.Information("Registering services");
+
+builder.Services.AddSerilog();
 
 builder.Services.AddScoped<UserManager<ApplicationUser>>();
 builder.Services.AddScoped<SignInManager<ApplicationUser>>();
@@ -24,6 +35,20 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(
 
     }).AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
+
+builder.Services.AddAuthorization();
+
+try
+{
+    string connection = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new ConfigurationException("String di connessione non trovata");
+
+}
+catch (ConfigurationException ex)
+{
+    Log.Fatal(ex.ToString());
+    await Log.CloseAndFlushAsync();
+    Environment.Exit(1);
+}
 
 builder.Services.AddAuthentication(options =>
 {
@@ -64,6 +89,8 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+app.UseSerilogRequestLogging();
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -80,3 +107,5 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+await Log.CloseAndFlushAsync();
